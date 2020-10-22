@@ -1,0 +1,54 @@
+clc;
+clear; close all;
+
+%% SpacePropulsion 1st Assigment | Hohman Transfer & Plane changes
+% Authors: 
+% Date 15/10/2020
+% Subject: Space propulsion
+
+%% Inits
+Inputs
+
+%% HohmanTransfer
+
+%Circular velocity
+T = time2sec(T_final);
+r_final = per2radius(T,mu);
+v_final = ComputeCircVelocity(mu,r_final);
+
+%Time to transfer
+a = computeSemiAxis(r_final,rp);
+t_transf = time2transfer(a,mu);
+
+%Mass fraction
+v1 = ComputeCircVelocity(mu,rp); % V at parking orbit
+vp = ComputeHohmanVelocity(rp,r_final,mu);
+
+% impulse at the perigee in order to enter the ellipse orbit
+D.V1 = vp - v1; 
+
+va = ComputeHohmanVelocity(r_final,rp,mu);
+
+% impulse to enter the final orbit
+D.V2 = v_final - va; 
+
+% the propellant mass:
+m_frac = computeMassBudget(Isp,g0,D);
+
+%% Inclination manouver 
+% We create a triangle where C' = 90
+C = 180 - i_final; % face
+B = ip; % initial parking orbit angle;
+a = n_shift; % the rotation the nodal point need to do --> face
+
+A = sphcosrule(a,B,C,1);
+c = sphsinerule(C,A,a);
+
+% Devlta v and mass to create the transfeer
+delta = A;
+D.V3 = s*sin(delta/2)*v_final;
+
+
+
+
+
